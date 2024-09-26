@@ -1,5 +1,6 @@
 # Hrum-Bot
-Hrum Bot that mines hrum cookies
+Hrum Bot that mines hrum cookies <br>
+Link: https://t.me/hrummebot/game?startapp=ref761561340
 
 # Requirements
 **Python 3.10 is required**
