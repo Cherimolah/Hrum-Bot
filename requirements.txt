@@ -1,0 +1,6 @@
+pyrogram
+tgcrypto
+python-dotenv
+loguru
+aiohttp
+fake-useragent
