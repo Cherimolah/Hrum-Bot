@@ -21,6 +21,7 @@ Create the virtual environment
 python -m venv venv
 venv\Scripts\activate # For Windows
 source venv/bin/activate # For Linux
+pip install -r requirements.txt
 ```
 
 # Run the bot
