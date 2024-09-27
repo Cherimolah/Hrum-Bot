@@ -51,16 +51,19 @@ class Bot:
                 update_date = info['data']['hero']['updateDate']
                 update_date = datetime.strptime(update_date, '%Y-%m-%d %H:%M:%S')
                 now = datetime.utcnow()
-                tomorrow = now + timedelta(days=1)
-                tomorrow = datetime(tomorrow.year, tomorrow.month, tomorrow.day, 7, 0, 0)
+                if now.hour >= 7:
+                    next_time = now + timedelta(days=1)
+                    next_time = datetime(next_time.year, next_time.month, next_time.day, 7, 0, 0)
+                else:
+                    next_time = datetime(now.year, now.month, now.day, 7, 0, 0)
                 if (now - update_date).total_seconds() > 86400:
                     cookies = (await self.http_client.open())['data']['history']
                     cookies.sort(key=lambda x: datetime.strptime(x['updateDate'], '%Y-%m-%d %H:%M:%S'), reverse=True)
                     logger.success(f'{self.tg_client.name} | Cookie opened: {cookies[0]["text"]}')
-                    logger.info(f'{self.tg_client.name} | Cookie will be available in {(tomorrow - now).total_seconds()} seconds')
-                    await asyncio.sleep((tomorrow - now).total_seconds() + random.randint(30, 120))
+                    logger.info(f'{self.tg_client.name} | Cookie will be available in {(next_time - now).total_seconds()} seconds')
+                    await asyncio.sleep((next_time - now).total_seconds() + random.randint(30, 120))
                 else:
-                    logger.info(f'{self.tg_client.name} | Cookie will be available in {(tomorrow - now).total_seconds()} seconds')
-                    await asyncio.sleep((tomorrow - now).total_seconds() + random.randint(30, 120))
+                    logger.info(f'{self.tg_client.name} | Cookie will be available in {(next_time - now).total_seconds()} seconds')
+                    await asyncio.sleep((next_time - now).total_seconds() + random.randint(30, 120))
             except:
                 await asyncio.sleep(10)
