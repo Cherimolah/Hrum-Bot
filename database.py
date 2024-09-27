@@ -1,6 +1,6 @@
 import sqlite3
 
-from fake_useragent import UserAgent
+from getuseragent import UserAgent
 
 
 class Database:
@@ -22,8 +22,8 @@ class Database:
         self.connection.commit()
 
     def save_proxy(self, session_name: str, proxy_url: str):
-        user_agent = UserAgent(os=['android'], platforms=['mobile'])
-        self.cursor.execute('INSERT INTO sessions VALUES(?, ?, ?)', (session_name, proxy_url, user_agent.random))
+        user_agent = UserAgent('android')
+        self.cursor.execute('INSERT INTO sessions VALUES(?, ?, ?)', (session_name, proxy_url, user_agent.Random()))
         self.connection.commit()
 
     def get_proxy(self, session_name: str):

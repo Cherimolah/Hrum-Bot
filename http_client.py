@@ -23,7 +23,7 @@ class HttpClient:
             "Sec-Ch-Ua-Mobile": "?1",
             "Sec-Ch-Ua-Platform": "\"Android\"",
             'Content-Type': 'application/json',
-            'User-Agent': 'PostmanRuntime/7.42.0',
+            'User-Agent': user_agent,
         }
         self.api_key = None
 
