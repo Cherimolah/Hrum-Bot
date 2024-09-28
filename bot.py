@@ -48,28 +48,20 @@ class Bot:
                     logger.error(f'{self.tg_client.name} | Auth failed')
                     return
                 info = await self.http_client.info()
-                update_date = info['data']['hero']['updateDate']
-                update_date = datetime.strptime(update_date, '%Y-%m-%d %H:%M:%S')
+                has_cookie = info['data']['hero']['cookies']
                 now = datetime.utcnow()
-                if update_date.hour >= 7:
-                    next_time = update_date + timedelta(days=1)
+                if now.hour >= 7:
+                    next_time = now + timedelta(days=1)
                     next_time = datetime(next_time.year, next_time.month, next_time.day, 7, 0, 0)
                 else:
                     next_time = datetime(now.year, now.month, now.day, 7, 0, 0)
-                if now > next_time:
+                if has_cookie:
                     cookies = (await self.http_client.open())['data']['history']
                     cookies.sort(key=lambda x: datetime.strptime(x['updateDate'], '%Y-%m-%d %H:%M:%S'), reverse=True)
+                    await self.http_client.open()
                     logger.success(f'{self.tg_client.name} | Cookie opened: {cookies[0]["text"]}')
-                    update_date = datetime.utcnow()
-                    if update_date.hour >= 7:
-                        next_time = update_date + timedelta(days=1)
-                        next_time = datetime(next_time.year, next_time.month, next_time.day, 7, 0, 0)
-                    else:
-                        next_time = datetime(now.year, now.month, now.day, 7, 0, 0)
-                    logger.info(f'{self.tg_client.name} | Cookie will be available in {(next_time - now).total_seconds()} seconds')
-                    await asyncio.sleep((next_time - now).total_seconds() + random.randint(30, 120))
-                else:
-                    logger.info(f'{self.tg_client.name} | Cookie will be available in {(next_time - now).total_seconds()} seconds')
-                    await asyncio.sleep((next_time - now).total_seconds() + random.randint(30, 120))
+                seconds = int((next_time - now).total_seconds())
+                logger.info(f'{self.tg_client.name} | Cookie will be available in {seconds} seconds')
+                await asyncio.sleep(seconds + random.randint(30, 120))
             except:
                 await asyncio.sleep(10)
