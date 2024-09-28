@@ -16,6 +16,14 @@ Copy the `.env` file and edit it. Use API_ID and API HASH from here https://my.t
 cp .env-sample .env
 nano .env
 ```
+
+| Setting       | Description                                                                                          |
+|---------------|------------------------------------------------------------------------------------------------------|
+| API_ID        | api_id your app                                                                                      |
+| API_HASH      | api_hash your app                                                                                    |
+ | ENTRY_TIMEOUT | Time (seconds) that bot will rentry in account and looking for more cookies<br/>Default: [3600,7200] |
+
+
 Create the virtual environment
 ```shell
 python -m venv venv

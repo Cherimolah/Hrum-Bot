@@ -9,6 +9,7 @@ from loguru import logger
 
 from database import db
 from http_client import HttpClient
+from config import ENTRY_TIMEOUT
 
 
 class Bot:
@@ -62,6 +63,8 @@ class Bot:
                     logger.success(f'{self.tg_client.name} | Cookie opened: {cookies[0]["text"]}')
                 seconds = int((next_time - now).total_seconds())
                 logger.info(f'{self.tg_client.name} | Cookie will be available in {seconds} seconds')
-                await asyncio.sleep(seconds + random.randint(30, 120))
+                time_to_sleep = random.randint(*ENTRY_TIMEOUT)
+                logger.info(f'{self.tg_client.name} | Sleeping for {time_to_sleep} seconds')
+                await asyncio.sleep(time_to_sleep)
             except:
                 await asyncio.sleep(10)
