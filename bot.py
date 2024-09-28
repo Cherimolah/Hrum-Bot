@@ -34,12 +34,13 @@ class Bot:
         return tg_web_data
 
     async def run(self):
-        await self.tg_client.connect()
         while True:
             try:
+                await self.tg_client.connect()
                 logger.info(f'{self.tg_client.name} | Session validated')
                 web_params = await self.get_init_params()
                 logger.info(f'{self.tg_client.name} | Web View params got')
+                await self.tg_client.disconnect()
                 api_key = unquote(web_params.split('&hash=', maxsplit=1)[1])
                 self.http_client.api_key = api_key
                 auth = await self.http_client.auth(web_params)
@@ -66,5 +67,9 @@ class Bot:
                 time_to_sleep = random.randint(*ENTRY_TIMEOUT)
                 logger.info(f'{self.tg_client.name} | Sleeping for {time_to_sleep} seconds')
                 await asyncio.sleep(time_to_sleep)
-            except:
+            except Exception as e:
+                logger.error(f'{self.tg_client.name} | Error: {e}')
                 await asyncio.sleep(10)
+            finally:
+                if self.tg_client.is_connected:
+                    await self.tg_client.disconnect()
