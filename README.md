@@ -17,12 +17,12 @@ cp .env-sample .env
 nano .env
 ```
 
-| Setting       | Description                                                                                          |
-|---------------|------------------------------------------------------------------------------------------------------|
-| API_ID        | api_id your app                                                                                      |
-| API_HASH      | api_hash your app                                                                                    |
- | ENTRY_TIMEOUT | Time (seconds) that bot will rentry in account and looking for more cookies<br/>Default: [3600,7200] |
-
+| Setting                 | Description                                                                                           |
+|-------------------------|-------------------------------------------------------------------------------------------------------|
+| API_ID                  | api_id your app                                                                                       |
+| API_HASH                | api_hash your app                                                                                     |
+ | ENTRY_TIMEOUT           | Time (seconds) that bot will reentry in account and looking for more cookies<br/>Default: [3600,7200] |
+| AUTO_CLAIM_DAILY_REWARD | Auto claim daily reward. True/False. Default True                                                     |
 
 Create the virtual environment
 ```shell

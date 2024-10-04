@@ -58,3 +58,9 @@ class HttpClient:
 
     async def open(self):
         return await self.request('POST', 'https://api.hrum.me/user/cookie/open', {})
+
+    async def daily_info(self):
+        return await self.request('POST', 'https://api.hrum.me/quests/daily', {})
+
+    async def claim_daily(self, day: int):
+        return await self.request('POST', 'https://api.hrum.me/quests/daily/claim', {'data': day})

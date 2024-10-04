@@ -9,7 +9,7 @@ from loguru import logger
 
 from database import db
 from http_client import HttpClient
-from config import ENTRY_TIMEOUT
+from config import ENTRY_TIMEOUT, AUTO_CLAIM_DAILY_REWARD
 
 
 class Bot:
@@ -50,6 +50,15 @@ class Bot:
                     logger.error(f'{self.tg_client.name} | Auth failed')
                     return
                 info = await self.http_client.info()
+                daily_rewards = (await self.http_client.daily_info())['data']
+                if AUTO_CLAIM_DAILY_REWARD:
+                    for day, state in daily_rewards.items():
+                        if state == 'canTake':
+                            logger.info(f'{self.tg_client.name} | Available daily reward for day number {day}')
+                            response = await self.http_client.claim_daily(day)
+                            if response['success']:
+                                logger.success(f'{self.tg_client.name} | Successfully claimed daily reward. '
+                                               f'Balance {response["data"]["hero"]["token"]}')
                 has_cookie = info['data']['hero']['cookies']
                 now = datetime.utcnow()
                 if now.hour >= 7:
