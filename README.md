@@ -23,6 +23,7 @@ nano .env
 | API_HASH                | api_hash your app                                                                                     |
  | ENTRY_TIMEOUT           | Time (seconds) that bot will reentry in account and looking for more cookies<br/>Default: [3600,7200] |
 | AUTO_CLAIM_DAILY_REWARD | Auto claim daily reward. True/False. Default True                                                     |
+| AUTO_CLAIM_RIDDLE       | True/False, default True                                                                              |
 
 Create the virtual environment
 ```shell

@@ -1,7 +1,7 @@
 import time
 from hashlib import md5
 import json
-from urllib.parse import urlencode, quote
+from urllib.parse import quote
 
 from aiohttp import ClientSession
 
@@ -64,3 +64,12 @@ class HttpClient:
 
     async def claim_daily(self, day: int):
         return await self.request('POST', 'https://api.hrum.me/quests/daily/claim', {'data': day})
+
+    async def more_info(self):
+        return await self.request('POST', 'https://api.hrum.me/user/data/after', {"data": {"lang": "ru"}})
+
+    async def check_riddle(self, riddle_id: str, answer: str):
+        return await self.request('POST', 'https://api.hrum.me/quests/check', {'data': [riddle_id, answer]})
+
+    async def claim_riddle(self, riddle_id: str, answer: str):
+        return await self.request('POST', 'https://api.hrum.me/quests/claim', {'data': [riddle_id, answer]})

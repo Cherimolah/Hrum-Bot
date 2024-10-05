@@ -9,7 +9,7 @@ from loguru import logger
 
 from database import db
 from http_client import HttpClient
-from config import ENTRY_TIMEOUT, AUTO_CLAIM_DAILY_REWARD
+from config import ENTRY_TIMEOUT, AUTO_CLAIM_DAILY_REWARD, AUTO_CLAIM_RIDDLE
 
 
 class Bot:
@@ -59,6 +59,31 @@ class Bot:
                             if response['success']:
                                 logger.success(f'{self.tg_client.name} | Successfully claimed daily reward. '
                                                f'Balance {response["data"]["hero"]["token"]}')
+                if AUTO_CLAIM_RIDDLE:
+                    quest_id = None
+                    for quest in info['data']['dbData']['dbQuests']:
+                        if quest['key'].startswith('riddle_'):
+                            quest_id = quest['key']
+                            key = quest.get('checkData')
+                            break
+                    if not key:
+                        logger.error(f'{self.tg_client.name} | Riddle key not found')
+                        quest_id = None
+                    if quest_id:
+                        more_info = await self.http_client.more_info()
+                        completed = False
+                        for quest in more_info['data']['quests']:
+                            if quest['key'] == quest_id and quest['isRewarded']:
+                                completed = True
+                                break
+                        if not completed:
+                            logger.info(f'{self.tg_client.name} | Available riddle')
+                            response = await self.http_client.check_riddle(quest_id, key)
+                            if response['data']['result']:
+                                logger.info(f'{self.tg_client.name} | Success check riddle')
+                                response = await self.http_client.claim_riddle(quest_id, key)
+                                if response['success']:
+                                    logger.success(f'{self.tg_client.name} | Successfully claimed riddle')
                 has_cookie = info['data']['hero']['cookies']
                 now = datetime.utcnow()
                 if now.hour >= 7:
