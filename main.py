@@ -1,9 +1,7 @@
 import asyncio
 import os
 import sys
-from typing import Optional
-import re
-import glob
+from urllib.parse import unquote
 
 from bot import Bot
 from pyrogram import Client
@@ -12,33 +10,13 @@ from aiohttp import ClientSession, ClientTimeout
 
 from config import API_ID, API_HASH
 from database import db
-
-
-proxy_regexp = re.compile(r'^(?:(?P<protocol>.+)://)?(?P<login>[^:]+):(?P<password>[^@|:]+)[@|:](?P<host>[^:]+):(?P<port>\d+)$')
+from utils import parse_proxy
 
 
 async def run_process():
-    names = [os.path.splitext(os.path.basename(file))[0] for file in glob.glob('sessions/*.session')]
-    clients = [Client(name, api_id=API_ID, api_hash=API_HASH,
-                      workdir='sessions/', proxy=parse_proxy(db.get_proxy(name))) for name in names]
-    tasks = [Bot(client).run() for client in clients]
+    session_names = db.get_all_session()
+    tasks = [Bot(session_name).run() for session_name in session_names]
     await asyncio.gather(*tasks)
-
-
-def parse_proxy(proxy: str) -> Optional[dict[str, str]]:
-    if not proxy:
-        return
-    if matcher := proxy_regexp.match(proxy):
-        return {
-            'scheme': matcher.group('protocol'),
-            'hostname': matcher.group('host'),
-            'port': int(matcher.group('port')),
-            'username': matcher.group('login'),
-            'password': matcher.group('password'),
-        }
-    else:
-        print('Invalid proxy')
-        exit(1)
 
 
 async def check_proxy(proxy_url: str):
@@ -56,11 +34,18 @@ async def create_session():
     proxy = input("Enter proxy (for example: http://user:password@123.123.123.123:8080). Press enter to continue: ")
     if proxy:
         await check_proxy(proxy)
-    client = Client(session_name, proxy=parse_proxy(proxy), api_id=API_ID, api_hash=API_HASH, workdir='sessions/')
-    async with client:
-        user_data = await client.get_me()
-    db.save_proxy(session_name, proxy)
-    logger.success(f"Created session {session_name}: @{user_data.username} {user_data.first_name} {user_data.last_name}")
+    type_session = input("Choose the type of session:\n1. Telegram session\n2. Query data\nYour choice: ")
+    if type_session == '1':
+        client = Client(session_name, proxy=parse_proxy(proxy), api_id=API_ID, api_hash=API_HASH, workdir='sessions/')
+        async with client:
+            user_data = await client.get_me()
+        db.save_session(session_name, proxy)
+        logger.success(
+            f"Created session {session_name}: @{user_data.username} {user_data.first_name} {user_data.last_name}")
+    elif type_session == '2':
+        query_data = unquote(input('Enter your query data: '))
+        db.save_query(session_name, proxy, query_data)
+        logger.info('Query data saved')
 
 
 async def main():

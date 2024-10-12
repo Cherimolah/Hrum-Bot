@@ -43,4 +43,8 @@ You can use the `-a` or `-action` to choose the option
 python main.py -a 2 # Run all sessions
 ```
 
-
+# How to use query
+Open and auth in telegram web on your PC. Press F12 to open the developer console. Find the "iframe" tag and copy from 
+url between #tgWebAppData= and &tgWebAppVersion= <br>
+Then create a session choosing query data
+![](https://github.com/Cherimolah/Hrum-Bot/blob/master/query_data.gif)
